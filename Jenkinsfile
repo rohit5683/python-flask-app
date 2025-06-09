@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage ("Clone the code") {
             steps {
-                git url: "", branch: ""
+                sh 'hostname'
             }
         }
     }
