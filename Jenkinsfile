@@ -22,7 +22,7 @@ pipeline {
 
         stage ("Running Python App") {
             steps {
-                sh 'python app.py'
+                sh 'nohup python app.py > log.txt 2>&1 &'
             }
         }
 
