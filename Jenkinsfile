@@ -2,6 +2,11 @@ pipeline {
     agent any
 
     stages {
+        stage ("Clean Workspace") {
+            steps {
+                deleteDir()
+            }
+        }
         stage ("Clone the code") {
             steps {
                 git url: 'https://github.com/rohit5683/python-flask-app.git', branch: 'master'
