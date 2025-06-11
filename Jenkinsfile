@@ -30,7 +30,6 @@ pipeline {
         }
 
         stage ("Running Python App") {
-            agent { label 'prod-server' }
             steps {
                 sh 'python app.py'
             }
