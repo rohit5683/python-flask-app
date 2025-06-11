@@ -33,7 +33,7 @@ pipeline {
             agent { label 'prod-server' }
             steps {
                 sh 'pip install -r requirements.txt'
-                sh 'python app.py'
+                sh 'nohup python app.py > output.log 2>&1 &'
             }
         }
 
