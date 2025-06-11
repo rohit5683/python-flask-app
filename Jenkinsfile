@@ -32,6 +32,7 @@ pipeline {
         stage ("Deploying Python App to Production Server") {
             agent { label 'prod-server' }
             steps {
+                sh 'sudo cp /home/ec2-user/flask.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl restart flask.service'
                 sh 'pip install -r requirements.txt'
                 sh 'python app.py'
             }
