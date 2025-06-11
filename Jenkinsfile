@@ -1,5 +1,5 @@
 pipeline {
-
+    agent none
     stages {
         stage ("Clean Workspace") {
             agent { label 'test-server' }
