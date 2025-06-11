@@ -29,7 +29,8 @@ pipeline {
             }
         }
 
-        stage ("Running Python App") {
+        stage ("Deploying Python App to Production Server") {
+            agent { label 'prod-server' }
             steps {
                 sh 'python app.py'
             }
