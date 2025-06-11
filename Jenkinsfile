@@ -25,7 +25,7 @@ pipeline {
             }
         }
 
-        stage ("Running Python App") {
+        stage ("Deplying App to Production Server") {
             steps {
                 sh 'python app.py'
             }
