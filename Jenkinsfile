@@ -37,11 +37,14 @@ pipeline {
         }
 
         stage ("Deploying Python App to Production Server") {
-            withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'MY_SSHKEY', usernameVariable: 'username')]) {
-                sh 'scp -i ${MY_SSHKEY} myapp.zip ${username}@${SERVER_IP}:/home/ec2-user/'
-                sh 'unzip myapp.zip && cd myapp'
-                sh 'pip install -r requirements.txt'
+            stages {
+                withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'MY_SSHKEY', usernameVariable: 'username')]) {
+                sh '''scp -i ${MY_SSHKEY} myapp.zip ${username}@${SERVER_IP}:/home/ec2-user/'
+                unzip myapp.zip && cd myapp
+                pip install -r requirements.txt
+                '''
     }
+            }
             
         }
 
