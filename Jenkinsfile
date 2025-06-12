@@ -23,7 +23,6 @@ pipeline {
                 }
             }
         }
-        }
 
         stage ("Installing the dependencies") {
             steps {
@@ -57,8 +56,8 @@ pipeline {
                         sudo systemctl restart flaskapp.service
 EOF
                     '''
-
                 }
             }
         }
     }
+}
