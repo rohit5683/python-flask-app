@@ -39,16 +39,16 @@ pipeline {
         stage ("Deploying Python App to Production Server") {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'MY_SSHKEY', usernameVariable: 'username')]) {
-                    // Upload the zip file
-                    sh 'scp -i $MY_SSHKEY -o StrictHostKeyChecking=no myapp.zip ${username}@${SERVER_IP}:/home/ec2-user/'
-
-                    // Run remote commands via SSH
-                    sh """
-                        ssh -i ${MY_SSHKEY} -o StrictHostKeyChecking=no  ${username}@${SERVER_IP} << 'EOF'
-                        unzip myapp.zip && cd myapp
+                    sh '''
+                    scp -i $MY_SSHKEY -o StrictHostKeyChecking=no myapp.zip  ${username}@${SERVER_IP}:/home/ec2-user/
+                    ssh -i $MY_SSHKEY -o StrictHostKeyChecking=no ${username}@${SERVER_IP} << EOF
+                        unzip -o /home/ec2-user/myapp.zip -d /home/ec2-user/app/
+                        source app/venv/bin/activate
+                        cd /home/ec2-user/app/
                         pip install -r requirements.txt
-                        EOF
-                        """
+                        sudo systemctl restart flaskapp.service
+EOF
+                    '''
 
                 }
             }
