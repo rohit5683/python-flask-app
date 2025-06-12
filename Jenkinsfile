@@ -45,7 +45,8 @@ pipeline {
                     // Run remote commands via SSH
                     sh '''
                     ssh -i $MY_SSHKEY -o StrictHostKeyChecking=no ${username}@${SERVER_IP}
-                        unzip -o /home/ec2-user/myapp.zip -d /home/ec2-user/myapp
+                        unzip myapp.zip
+                        cd myapp/
                         pip install -r requirements.txt
                     '''
                 }
