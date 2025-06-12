@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SERVER_IP = credentials('production-server-ip')
+        SERVER_IP = credentials('production-server-ip') // This is OK
     }
 
     stages {
@@ -11,7 +11,7 @@ pipeline {
                 deleteDir()
             }
         }
-        
+
         stage ("Clone the code") {
             steps {
                 git url: 'https://github.com/rohit5683/python-flask-app.git', branch: 'master'
@@ -29,25 +29,29 @@ pipeline {
                 sh 'python -m pytest'
             }
         }
-        
+
         stage ("Packaging the file") {
             steps {
-                sh 'zip -r myapp.zip . -x '*.git*' '*.gitignore*' '
+                sh 'zip -r myapp.zip . -x "*.git*" "*.gitignore*"'
             }
         }
 
         stage ("Deploying Python App to Production Server") {
-            stages {
+            steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'MY_SSHKEY', usernameVariable: 'username')]) {
-                sh '''scp -i ${MY_SSHKEY} myapp.zip ${username}@${SERVER_IP}:/home/ec2-user/'
-                unzip myapp.zip && cd myapp
-                pip install -r requirements.txt
-                '''
-    }
-            }
-            
-        }
+                    // Upload the zip file
+                    sh 'scp -i $MY_SSHKEY -o StrictHostKeyChecking=no myapp.zip ${username}@${SERVER_IP}:/home/ec2-user/'
 
+                    // Run remote commands via SSH
+                    sh '''
+                    ssh -i $MY_SSHKEY -o StrictHostKeyChecking=no ${username}@${SERVER_IP} << EOF
+                        unzip -o /home/ec2-user/myapp.zip -d /home/ec2-user/myapp
+                        cd /home/ec2-user/myapp
+                        pip install -r requirements.txt
+                    EOF
+                    '''
+                }
+            }
+        }
     }
-        
 }
