@@ -16,7 +16,7 @@ pipeline {
 
         stage ("Clone the code") {
             steps {
-                git url: ${git_url}, branch: ${git_branch}
+                git url: "${git_url}", branch: "${git_branch}"
             }
         }
 
