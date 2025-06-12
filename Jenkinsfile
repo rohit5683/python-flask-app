@@ -44,10 +44,11 @@ pipeline {
 
                     // Run remote commands via SSH
                     sh '''
-                    ssh -i $MY_SSHKEY -o StrictHostKeyChecking=no ${username}@${SERVER_IP}
+                    ssh -i $MY_SSHKEY -o StrictHostKeyChecking=no ${username}@${SERVER_IP} << 'EOF'
                         unzip -oq myapp.zip
                         cd myapp
                         pip install -r requirements.txt
+                        EOF
                     '''
                 }
             }
