@@ -44,10 +44,9 @@ pipeline {
 
                     // Run remote commands via SSH
                     sh """
-                        ssh -i ${MY_SSHKEY} -o StrictHostKeyChecking=no ec2-user@${SERVER_IP} << 'EOF'
-                        cd /home/ec2-user/myapp
-                        pip install -r requirements.txt --user
-                        nohup python3 app.py > app.log 2>&1 &
+                        ssh -i ${MY_SSHKEY} -o StrictHostKeyChecking=no  ${username}@${SERVER_IP} << 'EOF'
+                        unzip myapp.zip && cd myapp
+                        pip install -r requirements.txt
                         EOF
                         """
 
