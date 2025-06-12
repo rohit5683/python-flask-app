@@ -3,8 +3,6 @@ pipeline {
 
     environment {
         SERVER_IP = credentials('production_server_ip')
-        GIT_REPO_URL = credentials('git_url')
-        GIT_REPO_BRANCH = credentials('git_branch')
     }
 
     stages {
@@ -16,8 +14,15 @@ pipeline {
 
         stage ("Clone the code") {
             steps {
-                git url: "${git_url}", branch: "${git_branch}"
+                withCredentials([
+                    string(credentialsId: 'git_url', variable: 'GIT_REPO_URL'),
+                    string(credentialsId: 'git_branch', variable: 'GIT_REPO_BRANCH')
+                ]) {
+                    git branch: "${GIT_REPO_BRANCH}",
+                        url: "${GIT_REPO_URL}"
+                }
             }
+        }
         }
 
         stage ("Installing the dependencies") {
