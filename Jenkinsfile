@@ -43,13 +43,14 @@ pipeline {
                     sh 'scp -i $MY_SSHKEY -o StrictHostKeyChecking=no myapp.zip ${username}@${SERVER_IP}:/home/ec2-user/'
 
                     // Run remote commands via SSH
-                    sh '''
-                    ssh -i $MY_SSHKEY -o StrictHostKeyChecking=no ${username}@${SERVER_IP} << 'EOF'
-                        unzip -oq myapp.zip
-                        cd myapp
-                        pip install -r requirements.txt
+                    sh """
+                        ssh -i ${MY_SSHKEY} -o StrictHostKeyChecking=no ec2-user@${SERVER_IP} << 'EOF'
+                        cd /home/ec2-user/myapp
+                        pip install -r requirements.txt --user
+                        nohup python3 app.py > app.log 2>&1 &
                         EOF
-                    '''
+                        """
+
                 }
             }
         }
