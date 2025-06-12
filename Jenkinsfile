@@ -46,7 +46,7 @@ pipeline {
                     sh '''
                     ssh -i $MY_SSHKEY -o StrictHostKeyChecking=no ${username}@${SERVER_IP}
                         unzip -oq myapp.zip
-                        cd myapp/
+                        cd myapp
                         pip install -r requirements.txt
                     '''
                 }
