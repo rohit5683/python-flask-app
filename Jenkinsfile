@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         SERVER_IP = credentials('production_server_ip')
+        GIT_REPO_URL = credentials('git_url')
+        GIT_REPO_BRANCH = credentials('git_branch')
     }
 
     stages {
@@ -14,7 +16,7 @@ pipeline {
 
         stage ("Clone the code") {
             steps {
-                git url: 'https://github.com/rohit5683/python-flask-app.git', branch: 'master'
+                git url: ${git_url}, branch: ${git_branch}
             }
         }
 
