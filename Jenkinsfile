@@ -1,40 +1,48 @@
 pipeline {
-    agent none
+    agent any
+
+    environment {
+        SERVER_IP = credentials('production-server-ip')
+    }
+
     stages {
         stage ("Clean Workspace") {
-            agent { label 'test-server' }
             steps {
                 deleteDir()
             }
         }
         
         stage ("Clone the code") {
-            agent { label 'test-server' }
             steps {
                 git url: 'https://github.com/rohit5683/python-flask-app.git', branch: 'master'
             }
         }
 
         stage ("Installing the dependencies") {
-            agent { label 'test-server' }
             steps {
                 sh 'pip install -r requirements.txt'
             }
         }
 
         stage ("Testing the code") {
-            agent { label 'test-server' }
             steps {
                 sh 'python -m pytest'
             }
         }
+        
+        stage ("Packaging the file") {
+            steps {
+                sh 'zip -r myapp.zip . -x '*.git*' '*.gitignore*' '
+            }
+        }
 
         stage ("Deploying Python App to Production Server") {
-            agent { label 'prod-server' }
-            steps {
-                sh 'sudo cp /home/ec2-user/jenkins/workspace/Python-App/flask.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl restart flask.service'
+            withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'MY_SSHKEY', usernameVariable: 'username')]) {
+                sh 'scp -i ${MY_SSHKEY} myapp.zip ${username}@${SERVER_IP}:/home/ec2-user/'
+                sh 'unzip myapp.zip && cd myapp'
                 sh 'pip install -r requirements.txt'
-            }
+    }
+            
         }
 
     }
